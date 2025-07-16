@@ -1,0 +1,14 @@
+{
+  "meshConfig": {
+    "sources": [
+      {
+        "name": "ReviewsSummarizerAPI",
+        "handler": {
+          "openapi": {
+            "source": "./openapi.json"
+          }
+        }
+      }
+    ]
+  }
+}

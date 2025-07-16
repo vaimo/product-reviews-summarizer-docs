@@ -6,6 +6,7 @@ This application is a product review summarization service built using Adobe App
 
 ## Table of Contents
 
+- [Installation & Quick Start](#installation--quick-start)
 - [Product Processing Workflow](#product-processing-workflow)
 - [High-Level Architecture](#high-level-architecture)
 - [Actions](#actions)
@@ -27,6 +28,37 @@ This application is a product review summarization service built using Adobe App
     - [Runtime Configuration](#runtime-configuration)
     - [Increase Runtime Timeout](#increase-runtime-timeout)
     - [API Mesh Setup](#api-mesh-setup)
+
+## Installation & Quick Start
+
+Follow these steps to get the Product Reviews Summarizer up and running quickly:
+
+1. **Install via Adobe Exchange**
+
+   - Go to [Adobe Exchange](https://exchange.adobe.com/), select "Experience Cloude" and search for **Product Reviews Summarizer**.
+   - Click button **Free** or **Install** and follow the prompts. The application will be automatically deployed to your Adobe App Builder environment.
+
+2. **Create/Configure the Reviews API**
+
+   - Set up your Reviews API endpoint. This is a service (internal or external) that provides product reviews in the required format (see [Reviews API Format](#reviews-api-format)).
+   - You can use your own reviews service, or you can create a new App Builder project that will act as a middleware. Here is a sample implementation that you can simply adjust to your system and deploy to App Builder [example mock API](https://github.com/vaimo/product-reviews-summarizer-mock-api).
+
+3. **Configure Credentials & Environment Variables**
+
+   - In the Adobe Exchange console, click on **Manage**, go to your deployed app’s environment variables/settings.
+   - Fill in the required environment variables:
+     - Adobe Commerce credentials (OAuth1 for PaaS or IMS OAuth for SaaS)
+     - OpenAI API key
+     - Your Reviews API URL
+     - Store codes and target languages (see example below)
+     - (Optional) Langfuse keys for observability
+   - See the [Configuration](#configuration) section below for a detailed guide and examples.
+
+4. **Done! The App is Ready**
+   - The app is now fully deployed and will start processing reviews automatically on its daily schedule.
+   - You can also trigger processing manually via the provided endpoint (see [API Usage](#api-usage)).
+
+---
 
 ## Product Processing Workflow
 
@@ -108,6 +140,8 @@ The application supports native language processing for authentic, culturally ap
 - **Consistency**: English prompts ensure reliable instruction following across all languages
 
 ## Configuration
+
+> **The following section provides an extended and detailed guide to all configuration options, environment variables, and advanced setup.**
 
 > **IMPORTANT:** All configuration is done by setting environment variables directly in your deployment environment (e.g., via the Adobe App Builder Console or your cloud provider's UI). You do **not** need to create a `.env` file or install the app locally.
 
@@ -281,7 +315,7 @@ curl https://<your-app-url>/api/v1/web/product-reviews-summarizer/reviews-api?st
 > 1. Configure your app URL in `openapi.json` (replace `{{your_app_url}}` with your deployed app's URL).
 > 2. Run:
 >    ```bash
->    aio api-mesh:create -c mesh.json --env .env
+>    aio api-mesh:create -c mesh.json
 >    ```
 >    This will create the API Mesh, and GraphQL endpoints will be automatically generated for your REST API.
 
@@ -314,31 +348,3 @@ query {
 ### Debug Documentation
 
 - **[Debug Guide](docs/DEBUG_GUIDE.md)** - Debug endpoint usage for inspecting hashes and mappings
-
-### Available Scripts
-
-- `npm run build`: Compiles the TypeScript code from `actions-src/` to `actions/`.
-- `npm run watch`: Watches for changes in `actions-src/` and recompiles automatically.
-- `npm run lint`: Lints the TypeScript code.
-- `npm test`: Runs the unit tests.
-- `npm run eval-prompts`: Evaluates the quality of the AI prompts using `promptfoo`.
-
-### Useful Commands
-
-#### Runtime Configuration
-
-There is a default limit of 60 seconds for all actions. That's why we created the `process-worker` action so we can use OpenWhisk to avoid blocking the call and utilize the maximum 300000ms (5 minutes) timeout. You need to explicitly run the following command after deployment:
-
-#### Increase Runtime Timeout
-
-```bash
-aio rt action update product-reviews-summarizer/process -t 300000
-```
-
-#### API Mesh Setup
-
-To create and update the API mesh:
-
-```bash
-aio api-mesh:update -c mesh.json --env .env
-```

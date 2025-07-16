@@ -1,0 +1,162 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Product Reviews Summarizer API",
+    "description": "API for summarizing product reviews.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "{{your_app_url}}"
+    }
+  ],
+  "paths": {
+    "/api/v1/web/product-reviews-summarizer/reviews-api": {
+      "get": {
+        "summary": "Fetch product review summary",
+        "description": "Retrieves a summary of reviews for a specific product in the store's configured language.",
+        "parameters": [
+          {
+            "name": "storeCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "gb"
+            },
+            "description": "The store code for the product."
+          },
+          {
+            "name": "productId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "4071154"
+            },
+            "description": "The product ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with product review summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 2924
+                        },
+                        "sku": {
+                          "type": "string",
+                          "example": "4071154"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Costa Latte"
+                        }
+                      }
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "summary": {
+                          "type": "string",
+                          "description": "Overall summary of the product reviews.",
+                          "example": "These descaling tablets are highly regarded for their effective cleaning and ease of use, helping to maintain coffee machines and extend their lifespan."
+                        },
+                        "sentiment": {
+                          "type": "string",
+                          "enum": ["positive", "negative", "neutral"],
+                          "description": "Overall sentiment of the reviews.",
+                          "example": "positive"
+                        },
+                        "pros": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "List of positive aspects mentioned in reviews.",
+                          "example": [
+                            "Effective at descaling and cleaning",
+                            "Easy to use with clear instructions",
+                            "Improves machine performance and longevity"
+                          ]
+                        },
+                        "cons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "List of negative aspects mentioned in reviews.",
+                          "example": ["Relatively expensive for the quantity", "Occasional doubts about effectiveness", "Packaging could be better"]
+                        },
+                        "features": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "Name of the feature.",
+                                "example": "Descaling Power"
+                              },
+                              "description": {
+                                "type": "string",
+                                "description": "Description of the feature based on reviews.",
+                                "example": "The tablets effectively remove lime scale and buildup, restoring optimal machine performance and improving drink quality."
+                              },
+                              "quotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "Customer quotes highlighting this feature.",
+                                "example": ["Does what it says on the packet", "Works very well but could be a little cheaper"]
+                              }
+                            }
+                          },
+                          "description": "Key product features identified from reviews."
+                        },
+                        "thinking": {
+                          "type": "string",
+                          "description": "AI's reasoning process for the summary generation.",
+                          "example": "The batch analysis indicates a predominantly positive sentiment towards the descaling tablets..."
+                        }
+                      }
+                    },
+                    "totalReviews": {
+                      "type": "integer",
+                      "description": "Total number of reviews processed.",
+                      "example": 638
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-04-28T10:00:30.421Z"
+                    },
+                    "processId": {
+                      "type": "string",
+                      "example": "a0e22c08-e3e2-4250-990b-30fb667c73b9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Missing or invalid parameters."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ This guide explains how to use the debug endpoint to inspect and manage review s
 
 ## Overview
 
-The debug endpoint (`/api/v1/web/debug-internal/consumer`) allows you to:
+The debug endpoint (`/api/v1/web/product-reviews-summarizer/debug`) allows you to:
 
 - **List Summaries**: View all stored product review summaries
 - **Remove All Summaries**: Clear all stored summaries for troubleshooting or reset
@@ -12,7 +12,7 @@ The debug endpoint (`/api/v1/web/debug-internal/consumer`) allows you to:
 
 ## Authentication
 
-All debug requests may require authentication depending on your deployment. Include any required authentication headers when making requests to the debug endpoint.
+The debug requests require authentication. You need to generate a Bearer token using the Adobe App Builder OAuth Server and include it in the Authorization header of your debug endpoint requests. Additionally, you must include the `x-gw-ims-org-id` header with your organization ID.
 
 ## Available Operations
 
@@ -23,8 +23,9 @@ Retrieve all stored product review summaries.
 #### Example Request
 
 ```bash
-curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consumer" \
+curl -X POST "https://your-app-builder-endpoint/api/v1/web/product-reviews-summarizer/debug" \
   -H "Content-Type: application/json" \
+  -H "x-gw-ims-org-id: YOUR_ORG_ID"
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "data": {
@@ -37,22 +38,12 @@ curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consum
 
 ```json
 {
-  "status": "success",
-  "message": "list",
-  "data": {
+  "response": {
     "list": [
-      {
-        "storeCode": "default",
-        "productId": "123",
-        "summary": "Great product!"
-      },
-      {
-        "storeCode": "german_store_view",
-        "productId": "456",
-        "summary": "Sehr gut!"
-      }
+      ["product-review-summary-es-2631", "{\"product\":{\"id\":2631,\"sku\":\"134795\",\"name\":\"Pastillas para descalcificar\"},\"summary\":{}}"]
     ]
-  }
+  },
+  "type": "list"
 }
 ```
 
@@ -63,8 +54,9 @@ Clear all stored product review summaries. Useful for resetting the state.
 #### Example Request
 
 ```bash
-curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consumer" \
+curl -X POST "https://your-app-builder-endpoint/api/v1/web/product-reviews-summarizer/debug" \
   -H "Content-Type: application/json" \
+  -H "x-gw-ims-org-id: YOUR_ORG_ID"
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "data": {
@@ -77,11 +69,10 @@ curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consum
 
 ```json
 {
-  "status": "success",
-  "message": "all-summaries",
-  "data": {
+  "response": {
     "message": "All summaries removed"
-  }
+  },
+  "type": "remove-all-summaries"
 }
 ```
 
@@ -92,8 +83,9 @@ Remove a summary for a specific product and store.
 #### Example Request
 
 ```bash
-curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consumer" \
+curl -X POST "https://your-app-builder-endpoint/api/v1/web/product-reviews-summarizer/debug" \
   -H "Content-Type: application/json" \
+  -H "x-gw-ims-org-id: YOUR_ORG_ID"
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "data": {
@@ -108,10 +100,9 @@ curl -X POST "https://your-app-builder-endpoint/api/v1/web/debug-internal/consum
 
 ```json
 {
-  "status": "success",
-  "message": "summary",
-  "data": {
+  "response": {
     "message": "Summary removed"
-  }
+  },
+  "type": "remove-summary"
 }
 ```

@@ -11,7 +11,6 @@ This application is a product review summarization service built using Adobe App
 - [High-Level Architecture](#high-level-architecture)
 - [Actions](#actions)
 - [Multi-Language Support](#multi-language-support)
-- [Project Structure](#project-structure)
 - [Configuration](#configuration)
   - [Environment Variables](#environment-variables)
   - [Authentication: PaaS vs SaaS](#authentication-paas-vs-saas)
@@ -21,13 +20,7 @@ This application is a product review summarization service built using Adobe App
 - [API Usage](#api-usage)
   - [REST API](#rest-api)
   - [GraphQL API](#graphql-api)
-- [Project Setup](#project-setup)
 - [For Developers](#for-developers)
-  - [Available Scripts](#available-scripts)
-  - [Useful Commands](#useful-commands)
-    - [Runtime Configuration](#runtime-configuration)
-    - [Increase Runtime Timeout](#increase-runtime-timeout)
-    - [API Mesh Setup](#api-mesh-setup)
 
 ## Installation & Quick Start
 
@@ -35,7 +28,7 @@ Follow these steps to get the Product Reviews Summarizer up and running quickly:
 
 1. **Install via Adobe Exchange**
 
-   - Go to [Adobe Exchange](https://exchange.adobe.com/), select "Experience Cloude" and search for **Product Reviews Summarizer**.
+   - Go to [Adobe Exchange](https://exchange.adobe.com/), select "Experience Cloud" and search for **Product Reviews Summarizer**.
    - Click button **Free** or **Install** and follow the prompts. The application will be automatically deployed to your Adobe App Builder environment.
 
 2. **Create/Configure the Reviews API**
@@ -119,7 +112,7 @@ The application is built on Adobe App Builder and consists of several serverless
 - `process`: This is the main action that orchestrates the entire summarization workflow. It is a non-web action that runs automatically on a daily schedule and is not directly callable manually.
 - `process-worker`: A web-accessible action that can be used to manually trigger the functionality of the `process` action for on-demand processing.
 - `reviews-api`: An action that exposes a REST endpoint to retrieve the stored review summaries for a given product.
-- `debug`: A utility action for debugging purposes.
+- `debug`: A utility action for debugging purposes (Take a look at the **[Debug Guide](docs/DEBUG_GUIDE.md)**).
 
 ## Multi-Language Support
 
@@ -143,7 +136,7 @@ The application supports native language processing for authentic, culturally ap
 
 > **The following section provides an extended and detailed guide to all configuration options, environment variables, and advanced setup.**
 
-> **IMPORTANT:** All configuration is done by setting environment variables directly in your deployment environment (e.g., via the Adobe App Builder Console or your cloud provider's UI). You do **not** need to create a `.env` file or install the app locally.
+> **IMPORTANT:** All configuration is done by setting environment variables directly in your deployment environment (e.g., via the Adobe Exchange console). You do **not** need to create a `.env` file or install the app locally.
 
 ### Environment Variables
 
@@ -344,6 +337,20 @@ query {
 ```
 
 ## For Developers
+
+### Manual Processing Trigger
+
+You can manually trigger the review processing workflow by making a POST request to the process-worker endpoint:
+
+```bash
+curl -X POST "https://your-app-builder-endpoint/api/v1/web/product-reviews-summarizer/process-worker" \
+  -H "Content-Type: application/json" \
+  -H "x-gw-ims-org-id: YOUR_ORG_ID" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{}'
+```
+
+This endpoint requires authentication. You need to generate a Bearer token using the Adobe App Builder OAuth Server and include it in the Authorization header. Additionally, you must include the `x-gw-ims-org-id` header with your organization ID. The endpoint accepts an empty body and will trigger the same processing workflow that runs automatically on the daily schedule.
 
 ### Debug Documentation
 
